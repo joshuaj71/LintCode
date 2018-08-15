@@ -1,16 +1,17 @@
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class Solution1 {
     public static void main(String[] args) {
+        long startTime = System.currentTimeMillis();
 //        long result = trailingZeros(15);
 //        int result = digitCounts(0, 10);
-        int result = nthUglyNumber(9);
+        //0  1  2  3  4  5  6  7  8   9   10
+        //1, 2, 3, 4, 5, 6, 8, 9, 10, 12, 15,
+        int result = nthUglyNumber(10);
+        long endTime = System.currentTimeMillis();
 
-
-
-
-        System.out.print(result);
+        System.out.println(result);
+        System.out.println("gap millie = " + (endTime - startTime));
     }
 
     /*2. 尾部的零
@@ -28,6 +29,7 @@ public class Solution1 {
 //    3. 统计数字
 //    计算数字k在0到n中的出现的次数，k可能是0~9的一个值
 //    例如n=12，k=1，在 [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]，我们发现1出现了5次 (1, 10, 11, 12)
+
     /**
      * @param k: An integer
      * @param n: An integer
@@ -35,44 +37,46 @@ public class Solution1 {
      */
     static int digitCounts(int k, int n) {
         // write your code here
-        int i,j,num=0;
-        if(k==0)
-            num=1;
-        for(i=0;i<=n;i++){
-            j=i;
-            while (j!=0){
-                if(j%10==k)
+        int i, j, num = 0;
+        if (k == 0)
+            num = 1;
+        for (i = 0; i <= n; i++) {
+            j = i;
+            while (j != 0) {
+                if (j % 10 == k)
                     num++;
-                j/=10;
+                j /= 10;
             }
         }
         return num;
     }
 
 
-    //    4. 丑数 II
-//    设计一个算法，找出只含素因子2，3，5 的第 n 小的数。
-//    符合条件的数如：1, 2, 3, 4, 5, 6, 8, 9, 10, 12...
+    //    4. ugly number II
     static int nthUglyNumber(int n) {
-        List<Integer> uglys = new ArrayList<>();
-        uglys.add(1);
-
-        int p2 = 0, p3 = 0, p5 = 0;
-        // p2, p3 & p5 share the same queue: uglys
-
+/*
+     index  0   1   2   3   4   5   6
+      1     1*2 2*2 3*2 4*2 5*2 6*2 8*2
+            1*3 2*3 3*3 4*3 5*3 6*3 8*3
+            1*5 2*5 3*5 4*5 5*5 6*5 8*5
+*/
+        //0  1  2  3  4  5  6  7  8   9   10
+        //1, 2, 3, 4, 5, 6, 8, 9, 10, 12, 15,
+        int[] ugly = new int[n];
+        int index2 = 0, index3 = 0, index5 = 0;
+        int item2 = 2, item3 = 3, item5 = 5;
+        ugly[0]=1;
         for (int i = 1; i < n; i++) {
-            int lastNumber = uglys.get(i - 1);
-            while (uglys.get(p2) * 2 <= lastNumber) p2++;
-            while (uglys.get(p3) * 3 <= lastNumber) p3++;
-            while (uglys.get(p5) * 5 <= lastNumber) p5++;
-
-            uglys.add(Math.min(
-                    Math.min(uglys.get(p2) * 2, uglys.get(p3) * 3),
-                    uglys.get(p5) * 5
-            ));
+            int min=Math.min(Math.min(item2, item3), item5);
+            ugly[i]=min;
+            if (min == item2)
+                item2 = 2 * ugly[++index2];
+            if(min==item3)
+                item3 = 3 * ugly[++index3];
+            if(min==item5)
+                item5 = 5 * ugly[++index5];
         }
-
-        return uglys.get(n - 1);
+        return ugly[n - 1];
     }
 
 }
