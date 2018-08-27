@@ -7,11 +7,14 @@ public class Solution1 {
 //        int result = digitCounts(0, 10);
         //0  1  2  3  4  5  6  7  8   9   10
         //1, 2, 3, 4, 5, 6, 8, 9, 10, 12, 15,
-        int result = nthUglyNumber(10);
+//        int result = nthUglyNumber(10);
+//        int result = kthLargestElement(4,new int[]{9,4,7,3,1,2,5,4,8,6,0});
+        int[] result = mergeSortedArray(new int[]{1, 2}, new int[]{5, 6});
         long endTime = System.currentTimeMillis();
 
-        System.out.println(result);
+        System.out.println(">> result ==" + result);
         System.out.println("gap millie = " + (endTime - startTime));
+
     }
 
     /*2. 尾部的零
@@ -65,18 +68,75 @@ public class Solution1 {
         int[] ugly = new int[n];
         int index2 = 0, index3 = 0, index5 = 0;
         int item2 = 2, item3 = 3, item5 = 5;
-        ugly[0]=1;
+        ugly[0] = 1;
         for (int i = 1; i < n; i++) {
-            int min=Math.min(Math.min(item2, item3), item5);
-            ugly[i]=min;
+            int min = Math.min(Math.min(item2, item3), item5);
+            ugly[i] = min;
             if (min == item2)
                 item2 = 2 * ugly[++index2];
-            if(min==item3)
+            if (min == item3)
                 item3 = 3 * ugly[++index3];
-            if(min==item5)
+            if (min == item5)
                 item5 = 5 * ugly[++index5];
         }
         return ugly[n - 1];
+    }
+
+    static int kthLargestElement(int k, int[] nums) {
+        // write your code here
+        int low = 0, high = nums.length - 1;
+        while (low <= high) {
+            int pivot = nums[high];
+            int index = low - 1;
+            for (int i = low; i < high; i++) {
+                if (nums[i] > nums[high]) {
+                    swap(nums, i, ++index);
+                }
+            }
+            swap(nums, ++index, high);
+            if (index == k - 1) {
+                return nums[index];
+            }
+            if (index < k - 1) {
+                low = index + 1;
+            } else {
+                high = index - 1;
+            }
+        }
+        return -1;
+    }
+
+    static void swap(int[] nums, int a, int b) {
+        int temp = nums[a];
+        nums[a] = nums[b];
+        nums[b] = temp;
+    }
+
+//    6.合并排序数组 II
+    static int[] mergeSortedArray(int[] A, int[] B) {
+        // write your code here
+        int lenA = A.length;
+        int lenB = B.length;
+        int i = 0, j = 0, k = 0;
+        int[] result = new int[lenA + lenB];
+        while (i != lenA && j != lenB) {
+            if (A[i] > B[j]) {
+                result[k] = B[j++];
+            } else {
+                result[k] = A[i++];
+            }
+            k++;
+        }
+        if (i != lenA) {
+            while (i != lenA) {
+                result[k++] = A[i++];
+            }
+        } else {
+            while (j != lenB) {
+                result[k++] = B[j++];
+            }
+        }
+        return result;
     }
 
 }
